@@ -13,13 +13,9 @@
 </header>
 
 <h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
 
 <div data-closable="fade-out" class="todo-list-card card">
-    <div class="card-divider">
-        <h3>Active Mobile Users</h3>
-        <button class="close-button" data-close>x</button>
-    </div>
+
     <div class="card-section">
         <ul>
             <%payload.forEach(function(pay) {%>

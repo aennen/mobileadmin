@@ -6,24 +6,15 @@ var apis = require('../routes/apis');
 /* GET home page. */
 router.get('/', function(req, callback, next) {
 
-    var drinks = [
-        { name: 'Bloody Mary', drunkness: 3 },
-        { name: 'Martini', drunkness: 5 },
-        { name: 'Scotch', drunkness: 10 }
-    ];
-
-    var tagline = "Any code of your own that you haven't looked at for six or more months might as well have been written by someone else.";
+    var tagline = "Amodcs mobile user administration tool.";
 
     //apis.getPending();
 
-    apis.getActive( function(res) {
-
         callback.render('index', {
             title: 'Express',
-            tagline: tagline,
-            drinks: drinks
+            tagline: tagline
         });
-    })
+
 });
 
 /* Present active users */
@@ -33,6 +24,7 @@ router.get('/active', function(req, callback) {
 
         callback.render('active', {
             title: 'Active Mobile users',
+            message: "Showing all active mobile users",
             payload : JSON.parse(res)
         });
     })
@@ -45,6 +37,7 @@ router.get('/pending', function(req, callback) {
 
         callback.render('pending', {
             title: 'Pending Mobile users',
+            message: "Select users you want to approve or disaprove",
             payload : JSON.parse(res)
         });
     })
