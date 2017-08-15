@@ -21,8 +21,7 @@ router.get('/', function(req, callback, next) {
         callback.render('index', {
             title: 'Express',
             tagline: tagline,
-            drinks: drinks,
-            payload : JSON.parse(res)
+            drinks: drinks
         });
     })
 });

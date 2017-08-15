@@ -4,6 +4,7 @@
     <% include ../partials/head %>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/foundation.css' />
 </head>
 <body>
 
@@ -14,13 +15,20 @@
 <h1><%= title %></h1>
 <p>Welcome to <%= title %></p>
 
+<div data-closable="fade-out" class="todo-list-card card">
+    <div class="card-divider">
+        <h3>Pending Mobile Users</h3>
+        <button class="close-button" data-close>x</button>
+    </div>
+    <div class="card-section">
+        <ul>
+            <%payload.forEach(function(pay) {%>
+            <li><input id="<%=pay.login %>" type="checkbox"></input><label for="<%=pay.login %>"></label><%=pay.login %></li>
+            <%});%>
 
-<ul>
-    <%payload.forEach(function(pay) {%>
-    <li><%=pay.login %> </li>
-    <%});%>
-</ul>
-
+        </ul>
+    </div>
+</div>
 
 </body>
 

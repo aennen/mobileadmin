@@ -1,0 +1,45 @@
+
+<html>
+<head>
+    <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+
+            <title>Ionic Template</title>
+
+            <link href="https://code.ionicframework.com/1.0.0-beta.3/css/ionic.css" rel="stylesheet">
+                <script src="https://code.ionicframework.com/1.0.0-beta.3/js/ionic.bundle.js"></script>
+</head>
+<body ng-controller="MyCtrl">
+
+<ion-header-bar class="bar-positive">
+    <h1 class="title">Style Changer</h1>
+
+</ion-header-bar>
+
+<ion-content>
+    <div class="list">
+        <div style-changer ng-repeat="item in data.items"></div>
+    </div>
+</ion-content>
+
+<script id="listItem.html" type="text/ng-template">
+    <div class="item item-button-right" ng-class="color">
+
+        Item {{item.id}}
+
+        <button class="button button-positive" ng-click="changeColor()">
+            Change
+        </button>
+
+    </div>
+</script>
+
+</body>
+</html>
+
+
+<ul>
+    <%payload.forEach(function(pay) {%>
+    <li><%=pay.login %> </li>
+    <%});%>
+</ul>
