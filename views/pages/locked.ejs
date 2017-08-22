@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include ../partials/head %>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel='stylesheet' href='/stylesheets/foundation.css'/>
+</head>
+<body>
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<h1><%= title %></h1>
+
+<form action="lockUser" method="POST">
+    <div data-closable="fade-out" class="todo-list-card card">
+        <div class="card-section">
+            <ul>
+                <% if(payload != "") { %>
+                <% payload.forEach(function(pay) { %>
+                <li><input name="<%= pay.login %>" id="<%= pay.login %>" type="checkbox" value="1"></input><label for="<%= pay.login %>"></label><%= pay.login %></li>
+                <% }); } %>
+
+            </ul>
+        </div>
+
+        <!-- use button tag for on page actions -->
+        <p align="center">
+
+        <div class="row expanded">
+            <div class="large-3 large-offset-3 columns">
+                <button type="submit" class="hollow button small" name="unlock" value="1"><h5>Unlock Account</h5></button>
+            </div>
+        </div>
+        </p>
+    </div>
+
+</form>
+
+</body>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+</html>

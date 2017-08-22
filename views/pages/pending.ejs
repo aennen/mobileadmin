@@ -14,14 +14,14 @@
 
 <h1><%= title %></h1>
 <p><%= message %></p>
-
+<form action="pendingUser" method="POST">
 <div style="margin-left:6px;padding-left: 6px">
 <div data-closable="fade-out" class="todo-list-card card">
 
     <div class="card-section" name="plist">
         <ul>
             <%payload.forEach(function(pay) {%>
-            <li><input id="<%=pay.login %>" type="checkbox"></input><label for="<%=pay.login %>"></label><%=pay.login %></li>
+            <li><input name="<%= pay.login %>" id="<%= pay.login %>" type="checkbox" value="1"></input><label for="<%= pay.login %>"></label><%= pay.login %></li>
             <%});%>
 
         </ul>
@@ -29,13 +29,21 @@
 
     <!-- use button tag for on page actions -->
     <p align="center">
-        <a class="button button-rounded-hover" href="#">Approve</a>
-        <a class="button button-rounded-hover" href="#2">Reject</a>
+
+    <div class="row expanded">
+        <div class="large-3 large-offset-3 columns">
+            <button class="hollow button small" type="submit" name="approve" value="1"><h5>Approve</h5></button>
+            <button class="hollow button small" type="submit" name="reject" value="1"><h5>Reject</h5></button>
+        </div>
+    </div>
     </p>
 </div>
 </div>
-<!--
+</form>
 
+<!--
+        <a class="button button-rounded-hover" href="">Approve</a>
+        <a class="button button-rounded-hover" href="#2">Reject</a>
 <div class="portfolio-resume-scrolling-container row">
     <div class="columns small-12 medium-5 portfolio-resume-overview">
         <div class="portfolio-resume-overview-content">
