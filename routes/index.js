@@ -119,18 +119,31 @@ router.post('/activeUser', function (req, callback) {
 
     console.log(util.inspect(input, false, 4, true));
 
-    delete input['lock'];
 
-    console.log("LOCK INPUT:" + input.approve);
+    if (input.email) {
 
-    Object.keys(input).forEach(function (key) {
-        console.log("key:" + key + ":" + input[key]);
-        //https://amgate.itahs.com/node/activate?login=oded.levinstein@amdocs.com&appcode=amgate
-        apis.updateAccount(key, 'lock', function (res) {
-            console.log("Done");
+        delete input['email'];
+
+        Object.keys(input).forEach(function (key) {
+            console.log("key:" + key + ":" + input[key]);
+            apis.emailAccount(key, 'lock', function (res) {
+                console.log("Done");
+            });
         });
-    });
+    }
+    else {
+        delete input['lock'];
 
+        console.log("LOCK INPUT:" + input.approve);
+
+        Object.keys(input).forEach(function (key) {
+            console.log("key:" + key + ":" + input[key]);
+            //https://amgate.itahs.com/node/activate?login=oded.levinstein@amdocs.com&appcode=amgate
+            apis.updateAccount(key, 'lock', function (res) {
+                console.log("Done");
+            });
+        });
+    }
     callback.redirect('active');
 });
 

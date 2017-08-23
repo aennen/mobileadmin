@@ -1,7 +1,7 @@
 /**
  * Created by Owner on 8/14/2017.
  */
-
+var http = require('http');
 var https = require('https');
 var HttpsProxyAgent = require('https-proxy-agent');
 
@@ -13,13 +13,30 @@ var proxyOptions = {
 
 var proxyAgent = new HttpsProxyAgent(proxyOptions);
 
+var httpsOptions = {
+    host: 'amgate.itahs.com',
+    path: '',
+    method: 'GET',
+    agent: proxyAgent
+};
+
+var httpOptions = {
+    host: 'localhost',
+    path: "",
+    method: 'GET',
+};
+
+
 module.exports = {
+
+    emailAccount: function (account, callback) {
+        console.log("GET-EMAIL");
+    },
 
     getAccounts: function (accountType, callback) {
 
         console.log("GET-ACTIVE");
 
-        var alt = "[{'login':'no.one@amdocs.com','sys_creation_date':'2017-05-19T20:24:46.000Z'},{'login':'no.one@amdocs.com','sys_creation_date':'2017-05-19T20:24:46.000Z'}]";
         var workstr = "";
         var payload = "";
 
@@ -36,17 +53,11 @@ module.exports = {
             method = '/node/rejected?appcode=amgate&mode=json';
         }
 
+        httpsOptions.path = method;
+
         console.log("GET-METHOD" + method);
 
-        var options = {
-            host: 'amgate.itahs.com',
-            //hostname: '10.26.56.70',
-            path: method,
-            method: 'GET',
-            agent: proxyAgent
-        };
-
-        https.request(options, function (res) {
+        https.request(httpsOptions, function (res) {
 
             //console.log('STATUS: ' + res.statusCode);
             //console.log('HEADERS: ' + JSON.stringify(res.headers));
@@ -105,19 +116,11 @@ module.exports = {
             method = '/node/reset?login=' + account + '&appcode=amgate';
         }
 
+        httpsOptions.path = method;
 
         console.log("UPDATE-METHOD:" + method);
 
-        var options = {
-
-            host: 'amgate.itahs.com',
-            //path: '/node/lock?login=' + account + '&appcode=amgate',
-            path: method,
-            method: 'GET',
-            agent: proxyAgent
-        };
-
-        https.request(options, function(res) {
+        https.request(httpsOptions, function (res) {
 
             res.setEncoding('utf8');
 

@@ -14,30 +14,24 @@
 
 <h1><%= title %></h1>
 <form action="activeUser" method="POST">
-<div data-closable="fade-out" class="todo-list-card card">
+    <div style="margin-left:10px;padding-left: 10px">
 
-    <div class="card-section">
+        <div>
         <ul>
-            <%payload.forEach(function(pay) {%>
-            <li><input name="<%= pay.login %>" id="<%= pay.login %>" type="checkbox" value="1"></input><label for="<%= pay.login %>"></label><%= pay.login %></li>
-            <%});%>
-
+            <% if(payload != "") { %>
+            <% payload.forEach(function(pay) { %>
+            <ul><input name="<%= pay.login %>" id="<%= pay.login %>" type="checkbox" value="1"></input><label for="<%= pay.login %>"></label><%= pay.login %></ul>
+            <% }); } %>
         </ul>
     </div>
 
     <!-- use button tag for on page actions -->
-    <p align="center">
-
-    <div class="row expanded">
-        <div class="large-3 large-offset-3 columns">
+        <p align="left">
             <button type="submit" class="hollow button small" name="lock" value="1"><h5>Lock Account</h5></button>
-        </div>
-    </div>
+            <button type="submit" class="hollow button small" name="email" value="1"><h5>Send Email</h5></button>
     </p>
 
 </div>
-
-
 </form>
 
 </body>

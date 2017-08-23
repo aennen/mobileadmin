@@ -13,9 +13,9 @@
 </header>
 
 <h1><%= title %></h1>
-
-<form action="rejectUser" method="POST">
+<form action="activeUser" method="POST">
     <div style="margin-left:10px;padding-left: 10px">
+
         <div>
             <ul>
                 <% if(payload != "") { %>
@@ -27,11 +27,10 @@
 
         <!-- use button tag for on page actions -->
         <p align="left">
-                <button type="submit" class="hollow button small" name="delete" value="1"><h5>Delete</h5></button>
-                <button type="submit" class="hollow button small" name="reset" value="1"><h5>Reset</h5></button>
+            <button type="submit" class="hollow button small" name="lock" value="1"><h5>Send Email</h5></button>
         </p>
-    </div>
 
+    </div>
 </form>
 
 </body>
