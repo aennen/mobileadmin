@@ -232,5 +232,12 @@ a {
     opacity: 0.25;
 }
 
+.scrollBox {
+    height: 300px;
+    width: 50%;
+    border: 1px solid #000000;
+    overflow: auto;
+    padding: 10px;
 
+}
 

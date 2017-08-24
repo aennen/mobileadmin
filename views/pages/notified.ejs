@@ -13,8 +13,9 @@
 </header>
 
 <h1><%= title %></h1>
+<p><%= message %></p>
 
-<form action="rejectUser" method="POST">
+<form action="notifiedUser" method="POST">
     <div style="margin-left:10px;padding-left: 10px">
         <div class="scrollBox">
             <ul>
@@ -26,10 +27,10 @@
         </div>
 
         <p></p>
+
         <!-- use button tag for on page actions -->
         <p align="left">
-            <button type="submit" class="hollow button small" name="delete" value="1"><h5>Delete</h5></button>
-            <button type="submit" class="hollow button small" name="reset" value="1"><h5>Reset</h5></button>
+            <button class="button secondary" type="submit" name="approve" value="1"><h5>Approve</h5></button>
         </p>
     </div>
 </form>
@@ -37,6 +38,8 @@
 </body>
 
 <footer>
+
     <% include ../partials/footer %>
 </footer>
+
 </html>

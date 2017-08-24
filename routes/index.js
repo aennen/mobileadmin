@@ -36,8 +36,21 @@ router.get('/pending', function(req, callback) {
     apis.getAccounts('pending', function (res) {
 
         callback.render('pending', {
-            title: 'Pending Mobile users',
+            title: 'New Mobile user Account Requests',
             message: "Select users you want to approve or disaprove",
+            payload: res
+        });
+    })
+});
+
+/* Present emailed users list */
+router.get('/notified', function (req, callback) {
+
+    apis.getAccounts('notified', function (res) {
+
+        callback.render('notified', {
+            title: 'Pending Mobile users',
+            message: "Approved users who have not authenticated yet",
             payload: res
         });
     })
@@ -73,140 +86,74 @@ router.get('/about', function(req, res, next) {
     res.render('about', { title: 'Express' });
 });
 
-router.post('/pendingUser', function (req, callback) {
+router.post(['/pendingUser', '/activeUser', '/lockUser', '/rejectUser'], function (req, callback) {
 
     var input = JSON.parse(JSON.stringify(req.body));
+    var method;
+    var redirectURL;
 
-    console.log(util.inspect(input, false, 4, true));
+    //console.log(util.inspect(input, false, 4, true));
 
+    // Pending User actions
     if (input.approve) {
-
-        delete input['approve'];
-
         console.log("APPROVE INPUT:" + input.approve);
-
-        Object.keys(input).forEach(function (key) {
-            console.log("key:" + key + ":" + input[key]);
-            //https://amgate.itahs.com/node/activate?login=oded.levinstein@amdocs.com&appcode=amgate
-            apis.updateAccount(key, 'approve', function (res) {
-                console.log("Done");
-            });
-        });
+        method = "approve";
+        redirectURL = "pending";
     }
     else if (input.reject) {
-
         console.log("REJECT INPUT:" + input.reject);
-
-        delete input['reject'];
-
-        Object.keys(input).forEach(function (key) {
-            console.log("key:" + key + ":" + input[key]);
-            // https://amgate.itahs.com/node/reject?login=xxx&appcode=amgate
-            apis.updateAccount(key, 'reject', function (res) {
-                console.log("Done");
-            });
-        });
-
+        method = "reject";
+        redirectURL = "pending";
     }
 
-    callback.redirect('pending');
-});
-
-//LOCK: User account
-router.post('/activeUser', function (req, callback) {
-
-    var input = JSON.parse(JSON.stringify(req.body));
-
-    console.log(util.inspect(input, false, 4, true));
-
-
-    if (input.email) {
-
-        delete input['email'];
-
-        Object.keys(input).forEach(function (key) {
-            console.log("key:" + key + ":" + input[key]);
-            apis.emailAccount(key, 'lock', function (res) {
-                console.log("Done");
-            });
-        });
+    // Active User actions
+    else if (input.email) {
+        console.log("EMAIL INPUT:" + input.approve);
+        method = "email";
+        redirectURL = "active";
     }
-    else {
-        delete input['lock'];
-
-        console.log("LOCK INPUT:" + input.approve);
-
-        Object.keys(input).forEach(function (key) {
-            console.log("key:" + key + ":" + input[key]);
-            //https://amgate.itahs.com/node/activate?login=oded.levinstein@amdocs.com&appcode=amgate
-            apis.updateAccount(key, 'lock', function (res) {
-                console.log("Done");
-            });
-        });
+    else if (input.lock) {
+        console.log("LOCK INPUT:" + input.reject);
+        method = "lock";
+        redirectURL = "active";
     }
-    callback.redirect('active');
-});
 
-// LOCK: user account
-router.post('/lockUser', function (req, callback) {
+    // Locked User actions
+    else if (input.unlock) {
+        console.log("UNLOCK INPUT:" + input.lock);
+        method = "unlock";
+        redirectURL = "locked"
+    }
+    else if (input.reject) {
+        console.log("REJECT INPUT:" + input.reject);
+        method = "reject";
+        redirectURL = "locked"
+    }
 
-    var input = JSON.parse(JSON.stringify(req.body));
+    // Rejected User actions
+    if (input.delete) {
+        console.log("DELETE INPUT:" + input.delete);
+        method = "delete";
+        redirectURL = "rejected"
+    }
+    else if (input.reset) {
+        console.log("RESET INPUT:" + input.reset);
+        method = "reset";
+        redirectURL = "rejected"
+    }
 
-    console.log(util.inspect(input, false, 4, true));
-
-    console.log("UNLOCK INPUT:" + input.lock);
-
-    delete input['unlock'];
+    delete input[method];
 
     Object.keys(input).forEach(function (key) {
         console.log("key:" + key + ":" + input[key]);
-        // https://amgate.itahs.com/node/reject?login=xxx&appcode=amgate
-        apis.updateAccount(key, 'unlock', function (res) {
+        apis.updateAccount(key, method, function (res) {
             console.log("Done");
         });
     });
 
-    callback.redirect('locked');
-});
+    callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    callback.redirect(redirectURL);
 
-
-router.post('/rejectUser', function (req, callback) {
-
-    var input = JSON.parse(JSON.stringify(req.body));
-
-    console.log(util.inspect(input, false, 4, true));
-
-    if (input.delete) {
-
-        delete input['delete'];
-
-        console.log("DELETE INPUT:" + input.delete);
-
-        Object.keys(input).forEach(function (key) {
-            console.log("key:" + key + ":" + input[key]);
-            //https://amgate.itahs.com/node/activate?login=oded.levinstein@amdocs.com&appcode=amgate
-            apis.updateAccount(key, 'delete', function (res) {
-                console.log("Done");
-            });
-        });
-    }
-    else if (input.reset) {
-
-        console.log("RESET INPUT:" + input.reset);
-
-        delete input['reset'];
-
-        Object.keys(input).forEach(function (key) {
-            console.log("key:" + key + ":" + input[key]);
-            // https://amgate.itahs.com/node/reject?login=xxx&appcode=amgate
-            apis.updateAccount(key, 'reset', function (res) {
-                console.log("Done");
-            });
-        });
-
-    }
-
-    callback.redirect('rejected');
 });
 
 module.exports = router;

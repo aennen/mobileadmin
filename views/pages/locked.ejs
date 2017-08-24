@@ -16,7 +16,7 @@
 
 <form action="lockUser" method="POST">
     <div style="margin-left:10px;padding-left: 10px">
-        <div>
+        <div class="scrollBox">
             <ul>
                 <% if(payload != "") { %>
                 <% payload.forEach(function(pay) { %>
@@ -25,9 +25,11 @@
             </ul>
         </div>
 
+        <p></p>
         <!-- use button tag for on page actions -->
         <p align="left">
-                <button type="submit" class="hollow button small" name="unlock" value="1"><h5>Unlock Account</h5></button>
+            <button type="submit" class="hollow button small" name="unlock" value="1"><h5>Unlock Account</h5></button>
+            <button type="submit" class="hollow button small" name="reject" value="1"><h5>Reject</h5></button>
         </p>
     </div>
 

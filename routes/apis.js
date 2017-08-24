@@ -3,7 +3,10 @@
  */
 var http = require('http');
 var https = require('https');
+var fs = require('fs');
+
 var HttpsProxyAgent = require('https-proxy-agent');
+const sendmail = require('sendmail')();
 
 // Set up proxy agent =======================================
 var proxyOptions = {
@@ -25,6 +28,7 @@ var httpOptions = {
     path: "",
     method: 'GET',
 };
+
 
 
 module.exports = {
@@ -51,6 +55,9 @@ module.exports = {
         }
         else if (accountType === 'rejected') {
             method = '/node/rejected?appcode=amgate&mode=json';
+        }
+        else if (accountType === 'notified') {
+            method = '/node/listNotified?appcode=amgate&mode=json';
         }
 
         httpsOptions.path = method;
@@ -116,6 +123,7 @@ module.exports = {
             method = '/node/reset?login=' + account + '&appcode=amgate';
         }
 
+
         httpsOptions.path = method;
 
         console.log("UPDATE-METHOD:" + method);
@@ -137,8 +145,43 @@ module.exports = {
             console.log("END");
         });
 
+    },
+
+    sendMessage: function (sendTo, login, password, secretword, res) {
+
+        var data = "";
+        var message = "";
+
+        message = fs.readFile('routes/forgot.html', function (err, data) {
+
+            if (err) {
+                console.log("ERROR:" + err);
+            }
+
+            //console.log("READ:" + data);
+
+            message = data.toString();
+            message = message.replace("$LOGINID$", login);
+            message = message.replace("$PASSWORD$", password);
+            message = message.replace("$SECRETWORD$", secretword);
+
+            //console.log("READ2:" + message);
+        });
+
+
+        /*
+         var mailOptions = {
+         from: 'MobileDashboard@amdocs.com',
+         to: 'krrish@amdocs.com',
+         subject: 'Mobile Dashboard login info',
+         html: 'Mail of test sendmail '
+         }
+
+         sendmail(mailOptions, function(err, reply) {
+         console.log(err && err.stack);
+         console.dir(reply);
+         });
+         */
     }
-
-
 }
 
