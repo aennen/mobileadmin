@@ -13,7 +13,7 @@
 </header>
 
 <h1><%= title %></h1>
-<form action="activeUser" method="POST">
+<form action="" method="POST">
     <div style="margin-left:10px;padding-left: 10px">
         <div class="scrollBox">
         <ul>
@@ -28,9 +28,9 @@
 
         <!-- use button tag for on page actions -->
         <p align="left">
-            <button type="submit" class="hollow button small" name="lock" value="1"><h5>Lock Account</h5></button>
-            <button type="submit" class="hollow button small" name="email" value="1"><h5>Send Email</h5></button>
-
+            <button type="submit" formaction="activeUser" class="hollow button small" name="lock" value="1"><h5>Lock Account</h5></button>
+            <button type="submit" formaction="emailUser" class="hollow button small" name="email" value="1"><h5>Send Email</h5></button>
+            <button type="submit" formaction="showUser" class="hollow button small" name="show" value="1"><h5>Show User</h5></button>
         </p>
 
     </div>

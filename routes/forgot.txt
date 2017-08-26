@@ -1,0 +1,11 @@
+
+--- *AMDOCS MOBILE DASHBOARD* ---
+
+Your account info is shown below :
+
+Login       : $LOGINID$
+Password    : $PASSWORD$
+Secret word : $SECRETWORD$
+
+*** For support please contact : GSSSITOCMobileProduction@int.amdocs.com
+

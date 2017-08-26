@@ -2,6 +2,7 @@
 var express = require('express');
 var router = express.Router();
 var apis = require('../routes/apis');
+var email = require('../routes/mailer');
 var util = require('util');
 
 /* GET home page. */
@@ -31,11 +32,11 @@ router.get('/active', function(req, callback) {
 });
 
 /* Present pending users list */
-router.get('/pending', function(req, callback) {
+router.get('/requests', function (req, callback) {
 
-    apis.getAccounts('pending', function (res) {
+    apis.getAccounts('requests', function (res) {
 
-        callback.render('pending', {
+        callback.render('requests', {
             title: 'New Mobile user Account Requests',
             message: "Select users you want to approve or disaprove",
             payload: res
@@ -44,11 +45,11 @@ router.get('/pending', function(req, callback) {
 });
 
 /* Present emailed users list */
-router.get('/notified', function (req, callback) {
+router.get('/pending', function (req, callback) {
 
-    apis.getAccounts('notified', function (res) {
+    apis.getAccounts('pending', function (res) {
 
-        callback.render('notified', {
+        callback.render('pending', {
             title: 'Pending Mobile users',
             message: "Approved users who have not authenticated yet",
             payload: res
@@ -83,8 +84,70 @@ router.get('/rejected', function (req, callback) {
 });
 
 router.get('/about', function(req, res, next) {
+
+
+    apis.getAccounts('rejected', function (res) {
+
+        callback.render('reject', {
+            title: 'Rejected Mobile users',
+            message: "Select users you want to delete or resubmit",
+            payload: res
+        });
+    })
+
     res.render('about', { title: 'Express' });
 });
+
+router.post('/emailUser', function (req, callback) {
+
+    console.log("EMAIL:");
+
+    var input = JSON.parse(JSON.stringify(req.body));
+
+    delete input['email'];
+
+    Object.keys(input).forEach(function (key) {
+        console.log("key:" + key + ":" + input[key]);
+
+        apis.getAccount(key, function (data) {
+            console.log("KEY:" + key + ":" + JSON.stringify(data));
+            email.sendMessage(key, data, function (res) {
+                console.log("EMAIL-DONE");
+            })
+        })
+
+    });
+
+    callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    callback.redirect('active');
+});
+
+
+router.post('/showUser', function (req, callback) {
+
+    console.log("EMAIL:");
+
+    var input = JSON.parse(JSON.stringify(req.body));
+
+    delete input['show'];
+
+    Object.keys(input).forEach(function (key) {
+
+        console.log("key:" + key + ":" + input[key]);
+
+        apis.getAccount(key, function (data) {
+            console.log("KEY:" + key + ":" + JSON.stringify(data));
+            email.showUser(key, data, function (res) {
+                console.log("EMAIL-DONE");
+            })
+        })
+
+    });
+
+    callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    callback.redirect('active');
+});
+
 
 router.post(['/pendingUser', '/activeUser', '/lockUser', '/rejectUser'], function (req, callback) {
 
@@ -108,7 +171,7 @@ router.post(['/pendingUser', '/activeUser', '/lockUser', '/rejectUser'], functio
 
     // Active User actions
     else if (input.email) {
-        console.log("EMAIL INPUT:" + input.approve);
+        console.log("EMAIL INPUT:" + input.email);
         method = "email";
         redirectURL = "active";
     }
@@ -145,10 +208,13 @@ router.post(['/pendingUser', '/activeUser', '/lockUser', '/rejectUser'], functio
     delete input[method];
 
     Object.keys(input).forEach(function (key) {
+
         console.log("key:" + key + ":" + input[key]);
+
         apis.updateAccount(key, method, function (res) {
             console.log("Done");
         });
+
     });
 
     callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');

@@ -6,7 +6,7 @@ var https = require('https');
 var fs = require('fs');
 
 var HttpsProxyAgent = require('https-proxy-agent');
-const sendmail = require('sendmail')();
+const sendmail = require('sendmail')({devHost: '10.120.38.136'});
 
 // Set up proxy agent =======================================
 var proxyOptions = {
@@ -37,6 +37,49 @@ module.exports = {
         console.log("GET-EMAIL");
     },
 
+    getAccount: function (account, callback) {
+
+        var workstr = "";
+        var payload = "";
+
+        console.log("email:" + account);
+
+        method = '/node/showuser?login=' + account + '&appcode=amgate&mode=json';
+
+        httpsOptions.path = method;
+
+        console.log("PATH:" + method);
+
+
+        https.request(httpsOptions, function (res) {
+
+            res.setEncoding('utf8');
+
+            res.on('data', function (chunk) {
+                workstr += chunk;
+                //console.log('ACTIVE-BODY: ' + chunk);
+            });
+
+            res.on('end', function () {
+
+                var jobj = JSON.parse(workstr);
+
+                if (jobj.status === "No Rows") {
+                    console.log("No Rows");
+                    payload = "";
+                }
+                else {
+                    payload = JSON.parse(workstr);
+                }
+
+                callback(payload);
+            })
+
+        }).end(function () {
+            console.log("GET-ACTIVE-END");
+        });
+    },
+
     getAccounts: function (accountType, callback) {
 
         console.log("GET-ACTIVE");
@@ -44,20 +87,20 @@ module.exports = {
         var workstr = "";
         var payload = "";
 
-        if (accountType === 'pending') {
-            method = '/node/pending?appcode=amgate&mode=json';
+        if (accountType === 'requests') {
+            method = '/node/listRequests?appcode=amgate&mode=json';
         }
         else if (accountType === 'active') {
-            method = '/node/listactive?appcode=amgate&mode=json';
+            method = '/node/listActive?appcode=amgate&mode=json';
         }
         else if (accountType === 'locked') {
-            method = '/node/locked?appcode=amgate&mode=json';
+            method = '/node/listLocked?appcode=amgate&mode=json';
         }
         else if (accountType === 'rejected') {
-            method = '/node/rejected?appcode=amgate&mode=json';
+            method = '/node/listRejected?appcode=amgate&mode=json';
         }
-        else if (accountType === 'notified') {
-            method = '/node/listNotified?appcode=amgate&mode=json';
+        else if (accountType === 'pending') {
+            method = '/node/listPending?appcode=amgate&mode=json';
         }
 
         httpsOptions.path = method;
@@ -122,7 +165,14 @@ module.exports = {
         else if (action === 'reset') {
             method = '/node/reset?login=' + account + '&appcode=amgate';
         }
-
+        else if (action === 'email') {
+            console.log("email:" + account);
+            //method = '/node/showuser?login=' + account + '&appcode=amgate&mode=json';
+            sendMessage(account, function (res) {
+                console.log("Sent Mail" + res);
+                callback();
+            });
+        }
 
         httpsOptions.path = method;
 
@@ -137,7 +187,7 @@ module.exports = {
             });
 
             res.on('end', function() {
-                console.log("END");
+                console.log("UPDATE-END:" + payload);
                 callback();
             })
 
@@ -145,43 +195,6 @@ module.exports = {
             console.log("END");
         });
 
-    },
-
-    sendMessage: function (sendTo, login, password, secretword, res) {
-
-        var data = "";
-        var message = "";
-
-        message = fs.readFile('routes/forgot.html', function (err, data) {
-
-            if (err) {
-                console.log("ERROR:" + err);
-            }
-
-            //console.log("READ:" + data);
-
-            message = data.toString();
-            message = message.replace("$LOGINID$", login);
-            message = message.replace("$PASSWORD$", password);
-            message = message.replace("$SECRETWORD$", secretword);
-
-            //console.log("READ2:" + message);
-        });
-
-
-        /*
-         var mailOptions = {
-         from: 'MobileDashboard@amdocs.com',
-         to: 'krrish@amdocs.com',
-         subject: 'Mobile Dashboard login info',
-         html: 'Mail of test sendmail '
-         }
-
-         sendmail(mailOptions, function(err, reply) {
-         console.log(err && err.stack);
-         console.dir(reply);
-         });
-         */
     }
-}
 
+}

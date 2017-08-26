@@ -3,8 +3,8 @@
 <head>
     <% include ../partials/head %>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <link rel='stylesheet' href='/stylesheets/foundation.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel='stylesheet' href='/stylesheets/foundation.css'/>
 </head>
 <body>
 
@@ -15,7 +15,7 @@
 <h1><%= title %></h1>
 <p><%= message %></p>
 
-<form action="pendingUser" method="POST">
+<form action="notifiedUser" method="POST">
     <div style="margin-left:10px;padding-left: 10px">
         <div class="scrollBox">
             <ul>
@@ -30,8 +30,6 @@
 
         <!-- use button tag for on page actions -->
         <p align="left">
-            <button class="hollow button small" type="submit" name="approve" value="1"><h5>Approve</h5></button>
-            <button class="hollow button small" type="submit" name="reject" value="1"><h5>Reject</h5></button>
         </p>
     </div>
 </form>

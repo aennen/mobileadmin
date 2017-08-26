@@ -15,7 +15,7 @@
 <h1><%= title %></h1>
 <p><%= message %></p>
 
-<form action="notifiedUser" method="POST">
+<form action="pendingUser" method="POST">
     <div style="margin-left:10px;padding-left: 10px">
         <div class="scrollBox">
             <ul>
@@ -30,7 +30,8 @@
 
         <!-- use button tag for on page actions -->
         <p align="left">
-            <button class="button secondary" type="submit" name="approve" value="1"><h5>Approve</h5></button>
+            <button class="hollow button small" type="submit" name="approve" value="1"><h5>Approve</h5></button>
+            <button class="hollow button small" type="submit" name="reject" value="1"><h5>Reject</h5></button>
         </p>
     </div>
 </form>
