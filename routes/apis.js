@@ -50,7 +50,6 @@ module.exports = {
 
         console.log("PATH:" + method);
 
-
         https.request(httpsOptions, function (res) {
 
             res.setEncoding('utf8');
