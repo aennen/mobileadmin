@@ -4,19 +4,6 @@
 
 var fs = require('fs');
 var exec = require('child_process').spawn;
-//var dialog  = require('dialog');
-
-//var JSAlert = require("js-alert");
-
-//var Dialogs = require('dialogs');
-//var dialogs = Dialogs(opts={})
-
-//var nodemailer = require('nodemailer');
-//var smtpTransport = require('nodemailer-smtp-transport');
-//var HttpsProxyAgent = require('https-proxy-agent');
-//const sendmail = require('sendmail')({devHost: '10.120.38.136'});
-//var email = nodemailer.createTransport(smtpTransport({}))
-
 
 module.exports = {
 
@@ -39,22 +26,22 @@ module.exports = {
 
     },
 
-    sendMessage: function (account, jsonobj, cb) {
+    sendMessage: function (account, jsonobj, messagefile, cb) {
 
         var data = "";
         var message = "";
 
-        //httpsOptions.path = '/node/showuser?login=' + account + '&appcode=amgate&mode=json';
-
         console.log("SENDMESSAGE-METHOD:" + JSON.stringify(jsonobj) + ":" + jsonobj[0].login);
 
-        fs.readFile('routes/forgot.txt', function (err, data) {
+        var filename = 'routes/' + messagefile;
+
+        fs.readFile(filename, function (err, data) {
 
             if (err) {
                 console.log("ERROR:" + err);
             }
 
-            var tempfile = 'tmp-message.txt';
+            var tempfile = 'tmp-message-' + account + '.txt';
 
             //console.log("READ:" + data);
 
@@ -70,30 +57,7 @@ module.exports = {
                     console.log("WriteError:" + err);
                 }
 
-                // var ret = exec('notify.sh', [tempfile]);
-
-                //ret.stdout.on('data', function(data) {
-                //    console.log("RESPONSE:" + data.toString());
-                //});
-
-                //ret.on('exit', function(code)  {
-                //    console.log('Process completed');
-                // });
-
                 var text = "Sent to: " + jsonobj[0].login;
-
-                alert(text);
-
-                //dialogs.alert(text, function(ok) {
-                //    console.log("Alert ok");
-                //});
-
-
-                //dialog.info(text, "Mail Sent", function(exitCode) {
-                //    if(exitCode == 0) {
-                //        console.log("User clicked ok");
-                //    }
-                //});
 
                 console.log("File Saved");
             });
@@ -103,8 +67,6 @@ module.exports = {
         });
 
         console.log("SENDMESSAGE-DONE");
-
-
     },
 
     sendMessageNode: function (account, jsonobj, cb) {

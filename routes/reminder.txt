@@ -1,0 +1,13 @@
+
+--- *AMDOCS MOBILE DASHBOARD* ---
+
+This is a reminder that you have not yet logged into the Dashboard which will complete your authentication :
+
+If you have forgotten, here is your login info:
+
+Login       : $LOGINID$
+Password    : $PASSWORD$
+Secret word : $SECRETWORD$
+
+*** For support please contact : GSSSITOCMobileProduction@int.amdocs.com
+

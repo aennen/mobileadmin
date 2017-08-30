@@ -4,9 +4,8 @@
 var http = require('http');
 var https = require('https');
 var fs = require('fs');
-
+var config = require('../public/config');
 var HttpsProxyAgent = require('https-proxy-agent');
-const sendmail = require('sendmail')({devHost: '10.120.38.136'});
 
 // Set up proxy agent =======================================
 var proxyOptions = {
@@ -14,22 +13,20 @@ var proxyOptions = {
     port: 8080
 };
 
-var proxyAgent = new HttpsProxyAgent(proxyOptions);
-
+// HTTP setup options =======================================
 var httpsOptions = {
-    host: 'amgate.itahs.com',
+    host: '',
     path: '',
     method: 'GET',
-    agent: proxyAgent
+    agent: ''
 };
 
-var httpOptions = {
-    host: 'localhost',
-    path: "",
-    method: 'GET',
-};
+if (config.proxy) {
+    var proxyAgent = new HttpsProxyAgent(proxyOptions);
+    httpsOptions.agent = proxyAgent;
+}
 
-
+httpsOptions.host = config.host;
 
 module.exports = {
 
@@ -42,7 +39,7 @@ module.exports = {
         var workstr = "";
         var payload = "";
 
-        console.log("email:" + account);
+        console.log("GET-ACCOUNT:" + account);
 
         method = '/node/showuser?login=' + account + '&appcode=amgate&mode=json';
 
@@ -52,11 +49,14 @@ module.exports = {
 
         https.request(httpsOptions, function (res) {
 
+            //console.log('STATUS: ' + res.statusCode);
+            //console.log('HEADERS: ' + JSON.stringify(res.headers));
+
             res.setEncoding('utf8');
 
             res.on('data', function (chunk) {
                 workstr += chunk;
-                //console.log('ACTIVE-BODY: ' + chunk);
+                //console.log('ACCOUNT-BODY: ' + chunk);
             });
 
             res.on('end', function () {
@@ -70,18 +70,18 @@ module.exports = {
                 else {
                     payload = JSON.parse(workstr);
                 }
-
+                console.log("GET-ACCOUNT-END:");
                 callback(payload);
             })
 
         }).end(function () {
-            console.log("GET-ACTIVE-END");
+            console.log("GET-ACCOUNT-END-FUNC:");
         });
     },
 
     getAccounts: function (accountType, callback) {
 
-        console.log("GET-ACTIVE");
+        console.log("GET-ACCOUNTS");
 
         var workstr = "";
         var payload = "";
@@ -91,6 +91,9 @@ module.exports = {
         }
         else if (accountType === 'active') {
             method = '/node/listActive?appcode=amgate&mode=json';
+        }
+        else if (accountType === 'all') {
+            method = '/node/listActive?appcode=amgate&mode=json&showall=yes';
         }
         else if (accountType === 'locked') {
             method = '/node/listLocked?appcode=amgate&mode=json';
@@ -115,7 +118,7 @@ module.exports = {
 
             res.on('data', function (chunk) {
                 workstr += chunk;
-                //console.log('ACTIVE-BODY: ' + chunk);
+                console.log('ACCOUNTS-BODY: ' + chunk);
             });
 
             res.on('end', function () {
@@ -134,7 +137,7 @@ module.exports = {
             })
 
         }).end(function () {
-            console.log("GET-ACTIVE-END");
+            console.log("GET-ACCOUNTS-END");
         });
     },
 

@@ -4,6 +4,8 @@ var router = express.Router();
 var apis = require('../routes/apis');
 var email = require('../routes/mailer');
 var util = require('util');
+var extend = require('util')._extend;
+//var popupS = require('popups');
 
 /* GET home page. */
 router.get('/', function(req, callback, next) {
@@ -21,7 +23,8 @@ router.get('/', function(req, callback, next) {
 /* Present active users */
 router.get('/active', function(req, callback) {
 
-    apis.getAccounts('active', function (res) {
+
+    apis.getAccounts('all', function (res) {
 
         callback.render('active', {
             title: 'Active Mobile users',
@@ -83,12 +86,11 @@ router.get('/rejected', function (req, callback) {
     })
 });
 
-router.get('/about', function(req, res, next) {
-
+router.get('/about', function (req, res) {
 
     apis.getAccounts('rejected', function (res) {
 
-        callback.render('reject', {
+        res.render('reject', {
             title: 'Rejected Mobile users',
             message: "Select users you want to delete or resubmit",
             payload: res
@@ -101,51 +103,77 @@ router.get('/about', function(req, res, next) {
 router.post('/emailUser', function (req, callback) {
 
     console.log("EMAIL:");
+    var messagefile;
+    var backURL = req.header('Referer');
 
     var input = JSON.parse(JSON.stringify(req.body));
 
-    delete input['email'];
+    if (input.reminder) {
+        delete input['reminder'];
+        messagefile = 'reminder.txt';
+    }
+    else if (input.email) {
+        delete input['email'];
+        messagefile = 'forgot.txt';
+    }
+
+    console.log("REFERER:" + req.header('Referer'));
+
 
     Object.keys(input).forEach(function (key) {
         console.log("key:" + key + ":" + input[key]);
 
         apis.getAccount(key, function (data) {
-            console.log("KEY:" + key + ":" + JSON.stringify(data));
-            email.sendMessage(key, data, function (res) {
+            console.log("KEY:" + key + ":" + ":" + messagefile + ":" + JSON.stringify(data));
+            email.sendMessage(key, data, messagefile, function (res) {
                 console.log("EMAIL-DONE");
             })
         })
 
     });
 
+
     callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-    callback.redirect('active');
+    callback.redirect(backURL);
 });
 
 
 router.post('/showUser', function (req, callback) {
 
-    console.log("EMAIL:");
-
+    var userdata = "";
     var input = JSON.parse(JSON.stringify(req.body));
 
     delete input['show'];
 
+    var i = Object.keys(input).length;
+
     Object.keys(input).forEach(function (key) {
 
-        console.log("key:" + key + ":" + input[key]);
+        console.log("key:" + key + ":" + input[key] + ":" + i);
 
-        apis.getAccount(key, function (data) {
-            console.log("KEY:" + key + ":" + JSON.stringify(data));
-            email.showUser(key, data, function (res) {
-                console.log("EMAIL-DONE");
-            })
+        apis.getAccount(key, function (res) {
+            userdata += JSON.stringify(res);
+            userdata = userdata.replace('][', ',');
+            //console.log("\nprocessed:" + userdata + "\n");
+            //console.log(util.inspect(userdata, false, 4, true));
+
+            i--;
+
+            if (i <= 0) {
+                //console.log("DONE:" + i);
+
+                callback.render('show', {
+                    title: 'Show Mobile user',
+                    message: "Approved users who have not authenticated yet",
+                    payload: JSON.parse(userdata)
+                });
+            }
         })
 
-    });
 
-    callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-    callback.redirect('active');
+    })
+    //callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    //callback.redirect('active');
 });
 
 

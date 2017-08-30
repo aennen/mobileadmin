@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include ../partials/head %>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel='stylesheet' href='/stylesheets/foundation.css'/>
+</head>
+
+<body>
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<h1><%= title %></h1>
+
+<div style="margin-left:10px;padding-left: 10px">
+    <div class="scrollBox">
+        <table>
+            <tr>
+                <td>LOGIN</td>
+                <td>PASSWORD</td>
+                <td>SECRET WORD</td>
+            </tr>
+            <% if(payload != "") { %>
+            <% payload.forEach(function(pay) { %>
+            <tr>
+                <td><%= pay.login %> </td>
+                <td><%= pay.password %></td>
+                <td><%= pay.secret %></td>
+            </tr>
+            <% }); %>
+            <% } %>
+
+        </table>
+    </div>
+
+    <p></p>
+
+    <!-- use button tag for on page actions -->
+    <p align="left">
+    </p>
+</div>
+
+</body>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+</html>
