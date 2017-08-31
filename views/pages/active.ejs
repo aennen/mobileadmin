@@ -3,8 +3,8 @@
 <head>
     <% include ../partials/head %>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <link rel='stylesheet' href='/stylesheets/foundation.css' />
+    <link rel='stylesheet' href='./stylesheets/style.css'/>
+    <link rel='stylesheet' href='./stylesheets/foundation.css'/>
 </head>
 <body>
 
@@ -13,31 +13,35 @@
 </header>
 
 <h1><%= title %></h1>
-
-
-<form action="" method="post">
+<form action="" method="POST">
     <div style="margin-left:10px;padding-left: 10px">
-        <div class="scrollBox">
-            <ul>
-                <% if(typeof payload !== 'undefined' && payload !== '') { %>
-                <% payload.forEach(function(pay) { %>
-                <ul><input name="<%= pay.login %>" id="<%= pay.login %>" type="checkbox" value="1"></input><label for="<%= pay.login %>"></label><%= pay.login %> </ul>
-                <% }); } %>
-            </ul>
+
+        <div>
+            <div class="scrollBox">
+                <ul>
+
+                    <% payload.forEach(function(pay) { %>
+                    <ul><input name="<%= pay.login %>" id="<%= pay.login %>" type="checkbox" value="1"></input><label for="<%= pay.login %>"></label><%= pay.login %> </ul>
+                    <% }); %>
+
+                </ul>
+            </div>
+
+            <p></p>
+
+            <!-- use button tag for on page actions -->
+            <p align="left">
+
+                <button type="submit" formaction="activeUser" class="button secondary" name="lock" value="1"><h5>Lock</h5></button>
+                <button type="submit" formaction="emailUser" class="button secondary" name="email" value="1"><h5>Email</h5></button>
+                <button type="submit" formaction="showUser" class="button secondary" name="show" value="1"><h5>Show</h5></button>
+            </p>
+
         </div>
-
-        <p></p>
-
-        <!-- use button tag for on page actions -->
-        <p align="left">
-            <button type="submit" formaction="activeUser" class="hollow button small" name="lock" value="1"><h5>Lock Account</h5></button>
-            <button type="submit" formaction="emailUser" class="hollow button small" name="email" value="1"><h5>Send Email</h5></button>
-            <button type="submit" formaction="showUser" class="hollow button small" name="show" value="1"><h5>Show</h5></button>
-        </p>
-
     </div>
-</form>
 
+
+</form>
 
 </body>
 

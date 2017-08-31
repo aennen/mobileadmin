@@ -3,8 +3,8 @@
 <head>
     <% include ../partials/head %>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css'/>
-    <link rel='stylesheet' href='/stylesheets/foundation.css'/>
+    <link rel='stylesheet' href='./stylesheets/style.css'/>
+    <link rel='stylesheet' href='./stylesheets/foundation.css'/>
 </head>
 <body>
 
@@ -15,22 +15,30 @@
 <h1><%= title %></h1>
 
 <form action="lockUser" method="POST">
+
     <div style="margin-left:10px;padding-left: 10px">
+
         <div class="scrollBox">
+
             <ul>
                 <% if(payload != "") { %>
                 <% payload.forEach(function(pay) { %>
                 <ul><input name="<%= pay.login %>" id="<%= pay.login %>" type="checkbox" value="1"></input><label for="<%= pay.login %>"></label><%= pay.login %></ul>
                 <% }); } %>
+
             </ul>
+
         </div>
 
         <p></p>
+
         <!-- use button tag for on page actions -->
         <p align="left">
-            <button type="submit" class="hollow button small" name="unlock" value="1"><h5>Unlock Account</h5></button>
-            <button type="submit" class="hollow button small" name="reject" value="1"><h5>Reject</h5></button>
+            <button type="submit" class="button secondary" name="unlock" value="1"><h5>Unlock Account</h5></button>
         </p>
+
+    </div>
+
     </div>
 
 </form>

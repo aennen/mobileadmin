@@ -1,11 +1,10 @@
 /**
  * Created by Owner on 8/14/2017.
  */
+
 var http = require('http');
 var https = require('https');
-var fs = require('fs');
-var config = require('../public/config');
-var HttpsProxyAgent = require('https-proxy-agent');
+//var HttpsProxyAgent = require('https-proxy-agent');
 
 // Set up proxy agent =======================================
 var proxyOptions = {
@@ -13,50 +12,47 @@ var proxyOptions = {
     port: 8080
 };
 
-// HTTP setup options =======================================
-var httpsOptions = {
-    host: '',
-    path: '',
+
+//var httpsOptions = {
+//    host: 'amgate.itahs.com',
+//    path: "",
+//    method: 'GET',
+//    agent: proxyAgent
+//};
+
+var httpOptions = {
+    host: 'localhost',
+    port: 8080,
+    path: "",
     method: 'GET',
-    agent: ''
 };
 
-if (config.proxy) {
-    var proxyAgent = new HttpsProxyAgent(proxyOptions);
-    httpsOptions.agent = proxyAgent;
-}
 
-httpsOptions.host = config.host;
+//var proxyAgent = new HttpsProxyAgent(proxyOptions);
 
 module.exports = {
-
-    emailAccount: function (account, callback) {
-        console.log("GET-EMAIL");
-    },
 
     getAccount: function (account, callback) {
 
         var workstr = "";
         var payload = "";
 
-        console.log("GET-ACCOUNT:" + account);
+        console.log("email:" + account);
 
         method = '/node/showuser?login=' + account + '&appcode=amgate&mode=json';
 
-        httpsOptions.path = method;
+        httpOptions.path = method;
 
         console.log("PATH:" + method);
 
-        https.request(httpsOptions, function (res) {
 
-            //console.log('STATUS: ' + res.statusCode);
-            //console.log('HEADERS: ' + JSON.stringify(res.headers));
+        http.request(httpOptions, function (res) {
 
             res.setEncoding('utf8');
 
             res.on('data', function (chunk) {
                 workstr += chunk;
-                //console.log('ACCOUNT-BODY: ' + chunk);
+                //console.log('ACTIVE-BODY: ' + chunk);
             });
 
             res.on('end', function () {
@@ -70,18 +66,19 @@ module.exports = {
                 else {
                     payload = JSON.parse(workstr);
                 }
-                console.log("GET-ACCOUNT-END:");
+
                 callback(payload);
             })
 
         }).end(function () {
-            console.log("GET-ACCOUNT-END-FUNC:");
+            console.log("GET-ACTIVE-END");
         });
     },
 
+
     getAccounts: function (accountType, callback) {
 
-        console.log("GET-ACCOUNTS");
+        console.log("GET-ACTIVE");
 
         var workstr = "";
         var payload = "";
@@ -105,11 +102,11 @@ module.exports = {
             method = '/node/listPending?appcode=amgate&mode=json';
         }
 
-        httpsOptions.path = method;
+        httpOptions.path = method;
 
         console.log("GET-METHOD" + method);
 
-        https.request(httpsOptions, function (res) {
+        http.request(httpOptions, function (res) {
 
             //console.log('STATUS: ' + res.statusCode);
             //console.log('HEADERS: ' + JSON.stringify(res.headers));
@@ -118,7 +115,7 @@ module.exports = {
 
             res.on('data', function (chunk) {
                 workstr += chunk;
-                console.log('ACCOUNTS-BODY: ' + chunk);
+                //console.log('ACTIVE-BODY: ' + chunk);
             });
 
             res.on('end', function () {
@@ -137,7 +134,7 @@ module.exports = {
             })
 
         }).end(function () {
-            console.log("GET-ACCOUNTS-END");
+            console.log("GET-ACTIVE-END");
         });
     },
 
@@ -167,20 +164,12 @@ module.exports = {
         else if (action === 'reset') {
             method = '/node/reset?login=' + account + '&appcode=amgate';
         }
-        else if (action === 'email') {
-            console.log("email:" + account);
-            //method = '/node/showuser?login=' + account + '&appcode=amgate&mode=json';
-            sendMessage(account, function (res) {
-                console.log("Sent Mail" + res);
-                callback();
-            });
-        }
 
-        httpsOptions.path = method;
+        httpOptions.path = method;
 
         console.log("UPDATE-METHOD:" + method);
 
-        https.request(httpsOptions, function (res) {
+        http.request(httpOptions, function (res) {
 
             res.setEncoding('utf8');
 
@@ -189,7 +178,7 @@ module.exports = {
             });
 
             res.on('end', function() {
-                console.log("UPDATE-END:" + payload);
+                console.log("END");
                 callback();
             })
 
@@ -197,6 +186,30 @@ module.exports = {
             console.log("END");
         });
 
+    },
+
+    sendMessage: function (sendTo, login, password, secretword, res) {
+
+        var data = "";
+        var message = "";
+
+        message = fs.readFile('routes/forgot.html', function (err, data) {
+
+            if (err) {
+                console.log("ERROR:" + err);
+            }
+
+            //console.log("READ:" + data);
+
+            message = data.toString();
+            message = message.replace("$LOGINID$", login);
+            message = message.replace("$PASSWORD$", password);
+            message = message.replace("$SECRETWORD$", secretword);
+
+            //console.log("READ2:" + message);
+        });
+
     }
 
 }
+

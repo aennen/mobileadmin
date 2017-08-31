@@ -14,14 +14,14 @@
 
 <h1><%= title %></h1>
 <p><%= message %></p>
-<form action="pendingUser" method="POST">
+<form action="notifiedUser" method="POST">
     <div style="margin-left:10px;padding-left: 10px">
         <div class="scrollBox">
             <ul>
+                <% if(payload != "") { %>
                 <% payload.forEach(function(pay) { %>
                 <ul><input name="<%= pay.login %>" id="<%= pay.login %>" type="checkbox" value="1"></input><label for="<%= pay.login %>"></label><%= pay.login %></ul>
-                <% }); %>
-
+                <% }); } %>
             </ul>
         </div>
 
@@ -30,8 +30,6 @@
         <!-- use button tag for on page actions -->
         <p align="left">
 
-            <button class="button secondary" type="submit" name="approve" value="1"><h5>Approve</h5></button>
-            <button class="button secondary" type="submit" name="reject" value="1"><h5>Reject</h5></button>
         </p>
     </div>
 </form>
@@ -44,3 +42,4 @@
 </footer>
 
 </html>
+

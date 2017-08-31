@@ -4,8 +4,6 @@ var router = express.Router();
 var apis = require('../routes/apis');
 var email = require('../routes/mailer');
 var util = require('util');
-var extend = require('util')._extend;
-//var popupS = require('popups');
 
 /* GET home page. */
 router.get('/', function(req, callback, next) {
@@ -14,15 +12,14 @@ router.get('/', function(req, callback, next) {
 
     //apis.getPending();
 
-        callback.render('index', {
-            title: 'Express',
-            tagline: tagline
-        });
+    callback.render('index', {
+        title: 'Express',
+        tagline: tagline
+    });
 });
 
 /* Present active users */
 router.get('/active', function(req, callback) {
-
 
     apis.getAccounts('all', function (res) {
 
@@ -86,57 +83,9 @@ router.get('/rejected', function (req, callback) {
     })
 });
 
-router.get('/about', function (req, res) {
-
-    apis.getAccounts('rejected', function (res) {
-
-        res.render('reject', {
-            title: 'Rejected Mobile users',
-            message: "Select users you want to delete or resubmit",
-            payload: res
-        });
-    })
-
+router.get('/about', function (req, res, next) {
     res.render('about', { title: 'Express' });
 });
-
-router.post('/emailUser', function (req, callback) {
-
-    console.log("EMAIL:");
-    var messagefile;
-    var backURL = req.header('Referer');
-
-    var input = JSON.parse(JSON.stringify(req.body));
-
-    if (input.reminder) {
-        delete input['reminder'];
-        messagefile = 'reminder.txt';
-    }
-    else if (input.email) {
-        delete input['email'];
-        messagefile = 'forgot.txt';
-    }
-
-    console.log("REFERER:" + req.header('Referer'));
-
-
-    Object.keys(input).forEach(function (key) {
-        console.log("key:" + key + ":" + input[key]);
-
-        apis.getAccount(key, function (data) {
-            console.log("KEY:" + key + ":" + ":" + messagefile + ":" + JSON.stringify(data));
-            email.sendMessage(key, data, messagefile, function (res) {
-                console.log("EMAIL-DONE");
-            })
-        })
-
-    });
-
-
-    callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-    callback.redirect(backURL);
-});
-
 
 router.post('/showUser', function (req, callback) {
 
@@ -154,13 +103,10 @@ router.post('/showUser', function (req, callback) {
         apis.getAccount(key, function (res) {
             userdata += JSON.stringify(res);
             userdata = userdata.replace('][', ',');
-            //console.log("\nprocessed:" + userdata + "\n");
-            //console.log(util.inspect(userdata, false, 4, true));
 
             i--;
 
             if (i <= 0) {
-                //console.log("DONE:" + i);
 
                 callback.render('show', {
                     title: 'Show Mobile user',
@@ -172,10 +118,49 @@ router.post('/showUser', function (req, callback) {
 
 
     })
-    //callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-    //callback.redirect('active');
+
 });
 
+
+router.post('/emailUser', function (req, callback) {
+
+    console.log("EMAIL:");
+
+    var input = JSON.parse(JSON.stringify(req.body));
+
+    var filename;
+
+    var backURL = req.header('Referer');
+
+    console.log("REFERER:" + backURL);
+
+    if (input.reminder) {
+        delete input['reminder'];
+        filename = 'reminder.txt';
+    }
+    else if (input.email) {
+        delete input['email'];
+        filename = 'forgot.txt';
+    }
+
+    Object.keys(input).forEach(function (key) {
+
+        console.log("key:" + key + ":" + input[key]);
+
+        apis.getAccount(key, function (data) {
+            console.log("KEY:" + key + ":" + JSON.stringify(data));
+            email.sendMessage(key, data, filename, function (res) {
+                console.log("EMAIL-DONE");
+            })
+        })
+
+    });
+
+    callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    callback.redirect(backURL);
+});
+
+// POST: Functions /////////////////////////////////////////////////////////////////////////////////////
 
 router.post(['/pendingUser', '/activeUser', '/lockUser', '/rejectUser'], function (req, callback) {
 
@@ -199,7 +184,7 @@ router.post(['/pendingUser', '/activeUser', '/lockUser', '/rejectUser'], functio
 
     // Active User actions
     else if (input.email) {
-        console.log("EMAIL INPUT:" + input.email);
+        console.log("EMAIL INPUT:" + input.approve);
         method = "email";
         redirectURL = "active";
     }
@@ -236,18 +221,16 @@ router.post(['/pendingUser', '/activeUser', '/lockUser', '/rejectUser'], functio
     delete input[method];
 
     Object.keys(input).forEach(function (key) {
-
         console.log("key:" + key + ":" + input[key]);
-
         apis.updateAccount(key, method, function (res) {
             console.log("Done");
         });
-
     });
 
     callback.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
     callback.redirect(redirectURL);
 
 });
+
 
 module.exports = router;

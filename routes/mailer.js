@@ -1,11 +1,13 @@
 /**
  * Created by Owner on 8/14/2017.
  */
-
 var fs = require('fs');
 var exec = require('child_process').spawn;
+var dialog = require('dialog');
+
 
 module.exports = {
+
 
     showUser: function (account, jsonobj, cb) {
 
@@ -26,16 +28,18 @@ module.exports = {
 
     },
 
-    sendMessage: function (account, jsonobj, messagefile, cb) {
+    sendMessage: function (account, jsonobj, filename, cb) {
 
         var data = "";
         var message = "";
 
-        console.log("SENDMESSAGE-METHOD:" + JSON.stringify(jsonobj) + ":" + jsonobj[0].login);
+        var messagefile = 'routes/' + filename;
 
-        var filename = 'routes/' + messagefile;
+        //httpsOptions.path = '/node/showuser?login=' + account + '&appcode=amgate&mode=json';
 
-        fs.readFile(filename, function (err, data) {
+        console.log("SENDMESSAGE-METHOD:" + messagefile + ":" + JSON.stringify(jsonobj) + ":" + jsonobj[0].login);
+
+        fs.readFile(messagefile, function (err, data) {
 
             if (err) {
                 console.log("ERROR:" + err);
@@ -46,6 +50,7 @@ module.exports = {
             //console.log("READ:" + data);
 
             message = data.toString();
+            message = message.replace("$EMAIL$", jsonobj[0].login);
             message = message.replace("$LOGINID$", jsonobj[0].login);
             message = message.replace("$PASSWORD$", jsonobj[0].password);
             message = message.replace("$SECRETWORD$", jsonobj[0].secret);
@@ -53,20 +58,30 @@ module.exports = {
             console.log("MESSAGE-BODY:" + message);
 
             fs.writeFile(tempfile, message, function (err) {
+
                 if (err) {
                     console.log("WriteError:" + err);
                 }
 
+                var ret = exec('notify.sh', [tempfile]);
+
+                ret.stdout.on('data', function (data) {
+                    console.log("RESPONSE:" + data.toString());
+                });
+
+                ret.on('exit', function (code) {
+                    console.log('Process completed:' + data.toString());
+                })
+
                 var text = "Sent to: " + jsonobj[0].login;
 
-                console.log("File Saved");
+                console.log("File Saved:" + text);
             });
 
+            console.log("SENDMESSAGE-DONE");
             cb();
-            //cb.data = message;
         });
 
-        console.log("SENDMESSAGE-DONE");
     },
 
     sendMessageNode: function (account, jsonobj, cb) {
@@ -118,3 +133,4 @@ module.exports = {
     }
 
 }
+
